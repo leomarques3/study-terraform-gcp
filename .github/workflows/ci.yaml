@@ -31,4 +31,4 @@ jobs:
       run: terraform init
 
     - name: Terraform apply
-      run: terraform apply -var="project_id=${{ secrets.GCP_PROJECT }}" -var-file=../src/${{ github.event.inputs.environment }}"/env.tfvars -auto-approve
+      run: terraform apply -var="project_id=\"${{ secrets.GCP_PROJECT }}\"" -var-file=../src/${{ github.event.inputs.environment }}"/env.tfvars -auto-approve
