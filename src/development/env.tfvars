@@ -2,6 +2,7 @@
 region = "northamerica-northeast1"
 zone = "northamerica-northeast1-c"
 project_services = [
+  "cloudresourcemanager.googleapis.com",
   "compute.googleapis.com",
   "container.googleapis.com",
   "artifactregistry.googleapis.com"
