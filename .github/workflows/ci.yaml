@@ -3,6 +3,10 @@ name: Create GCP infrastructure
 on:
   workflow_dispatch:
     inputs:
+      project:
+        default: study-326317
+        required: true
+        description: 'Cloud Project'
       environment:
         default: 'development'
         required: true
@@ -31,4 +35,4 @@ jobs:
       run: terraform init
 
     - name: Terraform apply
-      run: terraform apply -var="project_id=\"${{ secrets.GCP_PROJECT }}\"" -var-file=../src/${{ github.event.inputs.environment }}"/env.tfvars -auto-approve
+      run: terraform apply -var="project_id=${{ github.event.inputs.project }}" -var-file=../src/${{ github.event.inputs.environment }}/env.tfvars -auto-approve
