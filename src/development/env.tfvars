@@ -1,5 +1,4 @@
 ##### Project #####
-project_id = "health-325517"
 region = "northamerica-northeast1"
 zone = "northamerica-northeast1-c"
 project_services = [
