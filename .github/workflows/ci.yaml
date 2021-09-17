@@ -37,4 +37,6 @@ jobs:
         terraform init
 
     - name: Terraform apply
-      run: terraform apply -var="project_id=${{ github.event.inputs.project }}" -var-file=../src/${{ github.event.inputs.environment }}/env.tfvars -auto-approve
+      run: |-
+        cd src
+        terraform apply -var="project_id=${{ github.event.inputs.project }}" -var-file=../src/${{ github.event.inputs.environment }}/env.tfvars -auto-approve
