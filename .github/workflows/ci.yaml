@@ -32,11 +32,15 @@ jobs:
       uses: hashicorp/setup-terraform@v1
 
     - name: Terraform init
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GCP_KEY }}
       run: |-
         cd src
         terraform init
 
     - name: Terraform apply
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GCP_KEY }}
       run: |-
         cd src
         terraform apply -var="project_id=${{ github.event.inputs.project }}" -var-file=../src/${{ github.event.inputs.environment }}/env.tfvars -auto-approve
