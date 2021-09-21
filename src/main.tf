@@ -87,7 +87,7 @@ resource "google_compute_subnetwork" "vpc_subnetwork" {
 }
 
 resource "google_container_cluster" "cluster" {
-  provider                 = "google-beta"
+  provider                 = google-beta
   name                     = var.cluster_name
   location                 = var.region
   initial_node_count       = 1
@@ -144,7 +144,7 @@ resource "google_container_cluster" "cluster" {
 }
 
 resource "google_container_node_pool" "node_pool" {
-  provider   = "google-beta"
+  provider   = google-beta
   name       = var.node_pool_name
   cluster    = google_container_cluster.cluster.id
   node_count = var.node_count
