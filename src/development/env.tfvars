@@ -1,6 +1,6 @@
 ##### Project #####
-region = "northamerica-northeast1"
-zone = "northamerica-northeast1-c"
+region = "us-central1"
+zone = "us-central1-b"
 project_services = [
   "cloudresourcemanager.googleapis.com",
   "compute.googleapis.com",
@@ -17,30 +17,37 @@ service_account_iam_roles = [
 ]
 
 ##### Repository #####
-image_repository_name = "health-images-repo"
+image_repository_name = "study-image-repo"
 
 ##### Network #####
-network_name = "health-vpc-network-dev"
-subnetwork_name = "health-vpc-subnetwork-dev"
+network_name = "study-vpc-network"
+subnetwork_name = "study-vpc-subnetwork"
 ip_cidr_subnetwork = "10.2.0.0/16"
-ip_services_name = "health-service-range-dev"
+ip_services_name = "study-service-range"
 ip_cidr_services = "10.100.0.0/20"
-ip_pods_name = "health-pod-range-dev"
+ip_pods_name = "study-pod-range"
 ip_cidr_pods = "10.96.0.0/14"
 ipv4_cidr_block = "172.16.0.16/28"
-rule_name = "allow-inbound-nginx"
-router_name = "health-router-dev"
-nat_name = "health-nat-ip-dev"
-nat_allocate_option = "AUTO_ONLY"
-nat_source_range = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+nginx_rule_name = "allow-inbound-nginx"
+ssh_rule_name = "allow-inbound-ssh"
+router_name = "study-router"
+nat_name = "study-nat-ip"
+nat_allocate_option = "MANUAL_ONLY"
+nat_source_range = "LIST_OF_SUBNETWORKS"
+ip_source_range = [
+  "PRIMARY_IP_RANGE",
+  "LIST_OF_SECONDARY_IP_RANGES"
+]
 
 ##### Cluster #####
-cluster_name = "health-cluster-dev"
+cluster_name = "study-cluster"
 node_locations = [
-  "northamerica-northeast1-c"
+  "us-central1-b"
 ]
-node_pool_name = "health-node-pool"
-node_count = 3
+logging_service = "logging.googleapis.com/kubernetes"
+monitoring_service = "monitoring.googleapis.com/kubernetes"
+node_pool_name = "study-node-pool"
+node_count = 1
 
 ##### Compute #####
 machine_type = "g1-small"

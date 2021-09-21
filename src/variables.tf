@@ -71,7 +71,12 @@ variable "ipv4_cidr_block" {
   default = null
 }
 
-variable "rule_name" {
+variable "nginx_rule_name" {
+  type    = string
+  default = null
+}
+
+variable "ssh_rule_name" {
   type    = string
   default = null
 }
@@ -96,6 +101,11 @@ variable "nat_source_range" {
   default = null
 }
 
+variable "ip_source_range" {
+  type    = list(string)
+  default = null
+}
+
 ##### Cluster #####
 variable "cluster_name" {
   type    = string
@@ -104,6 +114,16 @@ variable "cluster_name" {
 
 variable "node_locations" {
   type    = list(string)
+  default = null
+}
+
+variable "logging_service" {
+  type    = string
+  default = null
+}
+
+variable "monitoring_service" {
+  type    = string
   default = null
 }
 
