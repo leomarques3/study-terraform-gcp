@@ -99,10 +99,6 @@ resource "google_container_cluster" "cluster" {
   monitoring_service       = var.monitoring_service
 
   addons_config {
-    kubernetes_dashboard {
-      disabled = true
-    }
-
     network_policy_config {
       disabled = false
     }
@@ -132,7 +128,6 @@ resource "google_container_cluster" "cluster" {
   }
 
   ip_allocation_policy {
-    use_ip_aliases                = true
     cluster_secondary_range_name  = var.ip_pods_name
     services_secondary_range_name = var.ip_services_name
   }
