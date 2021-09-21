@@ -20,7 +20,7 @@ output "get_credentials" {
 }
 output "bastion_ssh" {
   description = "gcloud compute ssh to the bastion host command"
-  value       = format("gcloud compute ssh %s --project %s --zone %s -- -L8888:127.0.0.1:8888", google_compute_instance.instance.name, var.project_id, google_compute_instance.instance.zone)
+  value       = format("gcloud compute ssh %s --project %s --zone %s -- -tt -L8888:127.0.0.1:8888", google_compute_instance.instance.name, var.project_id, google_compute_instance.instance.zone)
 }
 
 output "bastion_kubectl" {

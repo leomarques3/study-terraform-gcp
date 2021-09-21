@@ -127,6 +127,13 @@ resource "google_container_cluster" "cluster" {
     master_ipv4_cidr_block  = var.ipv4_cidr_block
   }
 
+  master_authorized_networks_config {
+    cidr_blocks {
+      display_name = "bastion"
+      cidr_block   = format("%s/32", google_compute_instance.instance.network_interface.0.network_ip)
+    }
+  }
+
   ip_allocation_policy {
     cluster_secondary_range_name  = var.ip_pods_name
     services_secondary_range_name = var.ip_services_name
@@ -148,11 +155,6 @@ resource "google_container_node_pool" "node_pool" {
   name       = var.node_pool_name
   cluster    = google_container_cluster.cluster.id
   node_count = var.node_count
-
-  management {
-    auto_repair  = true
-    auto_upgrade = false
-  }
 
   node_config {
     machine_type    = var.machine_type
@@ -200,6 +202,10 @@ resource "google_compute_firewall" "allow-inbound-ssh" {
     protocol = "tcp"
     ports    = ["22"]
   }
+
+  depends_on = [
+    google_container_cluster.cluster
+  ]
 }
 
 resource "google_compute_address" "address" {

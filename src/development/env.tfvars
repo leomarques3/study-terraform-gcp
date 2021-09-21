@@ -47,7 +47,7 @@ node_locations = [
 logging_service = "logging.googleapis.com/kubernetes"
 monitoring_service = "monitoring.googleapis.com/kubernetes"
 node_pool_name = "study-node-pool"
-node_count = 1
+node_count = 3
 
 ##### Compute #####
 machine_type = "g1-small"
