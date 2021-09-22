@@ -1,5 +1,15 @@
 # study-terraform-gcp - Changelog
 
+## **[1.0.1]**
+
+### 2021-09-21
+#### **_Changed_:**
+- Changed cluster to be private
+- Created a bastion host to access the cluster through ssh
+- Added new firewall rule
+- Created new service account for the bastion host
+- Removed Makefile and shell scripts
+
 ## **[1.0.0]**
 
 ### 2021-09-17
