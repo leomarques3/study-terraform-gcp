@@ -1,15 +1,3 @@
-provider "google" {
-  project = var.project_id
-  region  = var.region
-  zone    = var.zone
-}
-
-provider "google-beta" {
-  project = var.project_id
-  region  = var.region
-  zone    = var.zone
-}
-
 resource "google_project_service" "service" {
   count              = length(var.project_services)
   service            = element(var.project_services, count.index)
@@ -26,8 +14,8 @@ resource "google_artifact_registry_repository" "image_repository" {
     google_project_service.service
   ]
 }
-#
-resource "google_service_account" "service_account_node" {
+
+resource "google_service_account" "node_sa" {
   account_id   = format("%s-node-sa", var.cluster_name)
   display_name = "GKE Security Service Account"
 
@@ -36,7 +24,7 @@ resource "google_service_account" "service_account_node" {
   ]
 }
 
-resource "google_service_account" "service_account_bastion" {
+resource "google_service_account" "bastion_sa" {
   account_id   = format("%s-bastion-sa", var.cluster_name)
   display_name = "GKE Bastion Service Account"
 
@@ -45,45 +33,10 @@ resource "google_service_account" "service_account_bastion" {
   ]
 }
 
-resource "google_project_iam_member" "service_account_roles" {
+resource "google_project_iam_member" "node_sa_role" {
   count   = length(var.service_account_iam_roles)
   role    = element(var.service_account_iam_roles, count.index)
-  member  = format("serviceAccount:%s", google_service_account.service_account_node.email)
-
-  depends_on = [
-    google_service_account.service_account_node
-  ]
-}
-
-resource "google_compute_network" "vpc_network" {
-  name                    = var.network_name
-  auto_create_subnetworks = false
-
-  depends_on = [
-    google_project_service.service
-  ]
-}
-
-resource "google_compute_subnetwork" "vpc_subnetwork" {
-  name                     = var.subnetwork_name
-  ip_cidr_range            = var.ip_cidr_subnetwork
-  region                   = var.region
-  network                  = google_compute_network.vpc_network.id
-  private_ip_google_access = true
-
-  secondary_ip_range {
-    range_name    = var.ip_services_name
-    ip_cidr_range = var.ip_cidr_services
-  }
-
-  secondary_ip_range {
-    range_name    = var.ip_pods_name
-    ip_cidr_range = var.ip_cidr_pods
-  }
-
-  depends_on = [
-    google_compute_network.vpc_network
-  ]
+  member  = format("serviceAccount:%s", google_service_account.node_sa.email)
 }
 
 resource "google_container_cluster" "cluster" {
@@ -144,10 +97,6 @@ resource "google_container_cluster" "cluster" {
     update = "30m"
     delete = "30m"
   }
-
-  depends_on = [
-    google_compute_subnetwork.vpc_subnetwork
-  ]
 }
 
 resource "google_container_node_pool" "node_pool" {
@@ -159,7 +108,7 @@ resource "google_container_node_pool" "node_pool" {
   node_config {
     machine_type    = var.machine_type
     oauth_scopes    = var.oauth_scopes
-    service_account = google_service_account.service_account_node.email
+    service_account = google_service_account.node_sa.email
 
     labels = {
       cluster = var.cluster_name
@@ -174,81 +123,6 @@ resource "google_container_node_pool" "node_pool" {
       node_metadata = "GKE_METADATA_SERVER"
     }
   }
-
-  depends_on = [
-    google_container_cluster.cluster
-  ]
-}
-
-resource "google_compute_firewall" "allow-inbound-nginx" {
-  name    = var.nginx_rule_name
-  network = google_compute_network.vpc_network.id
-
-  allow {
-    protocol = "tcp"
-    ports    = ["443", "8443"]
-  }
-
-  depends_on = [
-    google_container_cluster.cluster
-  ]
-}
-
-resource "google_compute_firewall" "allow-inbound-ssh" {
-  name          = var.ssh_rule_name
-  network       = google_compute_network.vpc_network.name
-
-  allow {
-    protocol = "tcp"
-    ports    = ["22"]
-  }
-
-  depends_on = [
-    google_container_cluster.cluster
-  ]
-}
-
-resource "google_compute_address" "address" {
-  name    = format("%s-nat-ip", var.cluster_name)
-  region  = var.region
-
-  depends_on = [
-    google_project_service.service,
-  ]
-}
-
-resource "google_compute_router" "router" {
-  name    = var.router_name
-  region  = var.region
-  network = google_compute_network.vpc_network.id
-
-  bgp {
-    asn = 64514
-  }
-
-  depends_on = [
-    google_container_cluster.cluster
-  ]
-}
-
-resource "google_compute_router_nat" "nat" {
-  name                               = var.nat_name
-  router                             = google_compute_router.router.name
-  region                             = var.region
-  nat_ips                            = [google_compute_address.address.self_link]
-  nat_ip_allocate_option             = var.nat_allocate_option
-  source_subnetwork_ip_ranges_to_nat = var.nat_source_range
-
-  subnetwork {
-    name                     = google_compute_subnetwork.vpc_subnetwork.id
-    source_ip_ranges_to_nat  = var.ip_source_range
-    secondary_ip_range_names = [var.ip_pods_name, var.ip_services_name]
-  }
-
-  depends_on = [
-    google_compute_router.router,
-    google_compute_address.address
-  ]
 }
 
 resource "google_compute_instance" "instance" {
@@ -277,7 +151,7 @@ resource "google_compute_instance" "instance" {
   }
 
   service_account {
-    email = google_service_account.service_account_bastion.email
+    email  = google_service_account.node_sa.email
     scopes = ["cloud-platform"]
   }
 }

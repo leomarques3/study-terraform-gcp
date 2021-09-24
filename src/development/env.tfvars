@@ -5,7 +5,11 @@ project_services = [
   "cloudresourcemanager.googleapis.com",
   "compute.googleapis.com",
   "container.googleapis.com",
-  "artifactregistry.googleapis.com"
+  "artifactregistry.googleapis.com",
+  "servicenetworking.googleapis.com",
+  "iam.googleapis.com",
+  "iamcredentials.googleapis.com",
+  "sqladmin.googleapis.com"
 ]
 service_account_iam_roles = [
   "roles/logging.logWriter",

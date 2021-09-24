@@ -1,5 +1,13 @@
 # study-terraform-gcp - Changelog
 
+## **[1.0.2]**
+
+### 2021-09-24
+#### **_Added_:**
+- Added Makefile to execute shell scripts
+- Added shell script `create.sh` to execute all terraform commands
+- Added MySQL database into terraform scripts
+
 ## **[1.0.1]**
 
 ### 2021-09-21

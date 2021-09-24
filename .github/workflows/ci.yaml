@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
     inputs:
       project:
-        default: study-326819
         required: true
         description: 'Cloud Project'
       environment:
